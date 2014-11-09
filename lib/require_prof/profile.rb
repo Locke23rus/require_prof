@@ -24,11 +24,11 @@ module RequireProf
     end
 
     def install_hook
-      ::Kernel.send :alias_method, :require, :require_prof
+      ::Kernel.send :alias_method, :require, :require_with_prof
     end
 
     def remove_hook
-      ::Kernel.send :alias_method, :require, :require_prof_orig
+      ::Kernel.send :alias_method, :require, :require_without_prof
     end
 
     def pause
@@ -84,7 +84,7 @@ module RequireProf
 
     def benchmark(name)
       start = Time.now.to_f
-      require_prof_orig(name) rescue nil
+      require_without_prof(name) rescue nil
       ((Time.now.to_f - start) * 1000).round(5) # ms
     end
 
