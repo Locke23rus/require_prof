@@ -1,3 +1,5 @@
+require 'require_prof/ext/kernel'
+
 module RequireProf
   class Profile
 

@@ -1,4 +1,3 @@
-require 'require_prof/ext/kernel'
 require 'require_prof/profile'
 
 # TODO: Add text output
