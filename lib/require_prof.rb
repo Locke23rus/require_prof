@@ -1,11 +1,9 @@
 require 'require_prof/profile'
+require 'require_prof/printers/tree_printer'
 
 # TODO: Add text output
-# TODO: Add option :precision
 # TODO: Add option :threshold - only text format
 # TODO: Add option :order - only text format
-
-
 
 module RequireProf
 
