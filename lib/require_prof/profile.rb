@@ -85,7 +85,7 @@ module RequireProf
     def benchmark(name)
       start = Time.now.to_f
       require_without_prof(name) rescue nil
-      ((Time.now.to_f - start) * 1000).round(5) # ms
+      (Time.now.to_f - start) * 1000 # ms
     end
 
   end
