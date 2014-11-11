@@ -4,7 +4,6 @@ require 'require_prof/printers/tree_printer'
 # TODO: Add text output
 # TODO: Add option :threshold - only text format
 # TODO: Add option :order - only text format
-# TODO: Check https://github.com/schneems/derailed_benchmarks/blob/master/lib/derailed_benchmarks/tasks.rb#L134-L165
 # TODO: Comment on https://twitter.com/schneems/status/531820584779264002
 
 module RequireProf
@@ -59,9 +58,24 @@ module RequireProf
     stop
   end
 
-  def self.add_trace(caller, name)
-    ensure_running!
-    @profile.add_trace(caller, name)
+  def self.require(name)
+    if running? && !paused?
+      parent = @profile.stack.last
+      node = { name: name, deps: [], time: 0.0, total_time: 0.0}
+      parent[:deps] << node
+      @profile.stack.push(node)
+      begin
+        before = Time.now.to_f
+        original_require name
+      ensure
+        @profile.stack.pop
+        after = Time.now.to_f
+      end
+      node[:time] = (after - before) * 1000
+      node[:total_time] = node[:time]
+    else
+      original_require name
+    end
   end
 
   private
@@ -74,5 +88,3 @@ module RequireProf
     raise(RuntimeError, 'RequireProf.start was already called') if running?
   end
 end
-
-
