@@ -5,6 +5,8 @@ require 'require_prof/printers/tree_printer'
 # TODO: Add option :threshold - only text format
 # TODO: Add option :order - only text format
 # TODO: Comment on https://twitter.com/schneems/status/531820584779264002
+# TODO: Measure memory footprint
+
 
 module RequireProf
 
@@ -60,19 +62,7 @@ module RequireProf
 
   def self.require(name)
     if running? && !paused?
-      parent = @profile.stack.last
-      node = { name: name, deps: [], time: 0.0, total_time: 0.0}
-      parent[:deps] << node
-      @profile.stack.push(node)
-      begin
-        before = Time.now.to_f
-        original_require name
-      ensure
-        @profile.stack.pop
-        after = Time.now.to_f
-      end
-      node[:time] = (after - before) * 1000
-      node[:total_time] = node[:time]
+      @profile.require(name)
     else
       original_require name
     end
