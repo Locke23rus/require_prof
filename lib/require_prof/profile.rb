@@ -3,6 +3,8 @@ require 'require_prof/ext/kernel'
 module RequireProf
   class Profile
 
+    UNKNOWN = 'UNKNOWN'.freeze
+
     def initialize
       @running = false
       @paused = false
@@ -62,8 +64,15 @@ module RequireProf
         if from.end_with?("<main>'") || from.end_with?("irb_binding'")
           @result.unshift({ name: name, time: time, total_time: time, deps: [] })
         else
-          caller = find_caller(from, @result)
-          caller[:deps].unshift({ name: name, time: time, total_time: time, deps: [] })
+          caller = find_caller(from, @result) || find_caller(from, @result.last[:deps])
+          if caller
+            caller[:deps].unshift({ name: name, time: time, total_time: time, deps: [] })
+          else
+            if @result.last[:name] != UNKNOWN
+              @result.push({ name: UNKNOWN, time: 0.0, total_time: 0.0, deps: [] })
+            end
+            @result.last[:deps].unshift({ name: name, time: time, total_time: time, deps: [] })
+          end
         end
       end
     end
@@ -71,13 +80,16 @@ module RequireProf
     def process_time(deps)
       deps.each do |dep|
         unless dep[:deps].empty?
-          dep[:time] = dep[:total_time] - dep[:deps].map { |d| d[:total_time] }.reduce(:+)
+          if dep[:name] != UNKNOWN
+            dep[:time] = dep[:total_time] - dep[:deps].map { |d| d[:total_time] }.reduce(:+)
+          end
           process_time dep[:deps]
         end
       end
     end
 
     def find_caller(from, deps)
+      return if deps.empty?
       return deps.first if from.include?("/#{deps.first[:name]}.rb")
       find_caller(from, deps.first[:deps])
     end

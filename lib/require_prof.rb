@@ -4,6 +4,8 @@ require 'require_prof/printers/tree_printer'
 # TODO: Add text output
 # TODO: Add option :threshold - only text format
 # TODO: Add option :order - only text format
+# TODO: Check https://github.com/schneems/derailed_benchmarks/blob/master/lib/derailed_benchmarks/tasks.rb#L134-L165
+# TODO: Comment on https://twitter.com/schneems/status/531820584779264002
 
 module RequireProf
 
