@@ -1,4 +1,5 @@
 require 'require_prof/ext/kernel'
+require 'require_prof/require_tree'
 
 module RequireProf
   class Profile
@@ -6,7 +7,7 @@ module RequireProf
     def initialize
       @running = false
       @paused = false
-      @root = {name: '.', deps: [], time: 0.0, total_time: 0.0}
+      @root = RequireTree.new('.')
       @stack = [@root]
     end
 
@@ -35,14 +36,14 @@ module RequireProf
       remove_hook
       @running = false
       post_process
-      @root[:deps]
+      @root
     end
 
     def require(name)
       parent = @stack.last
-      node = { name: name, deps: [], time: 0.0, total_time: 0.0}
-      parent[:deps] << node
-      @stack.push(node)
+      node = RequireTree.new(name)
+      parent << node
+      @stack << node
       begin
         time_before = Time.now.to_f
         original_require name
@@ -50,7 +51,7 @@ module RequireProf
         @stack.pop
         time_after = Time.now.to_f
       end
-      node[:total_time] = (time_after - time_before) * 1000
+      node.total_time = (time_after - time_before) * 1000
     end
 
     private
@@ -64,14 +65,7 @@ module RequireProf
     end
 
     def post_process
-      process_time(@root[:deps])
-    end
-
-    def process_time(deps)
-      deps.each do |dep|
-        dep[:time] = dep[:total_time] - dep[:deps].map { |d| d[:total_time] }.reduce(:+).to_f
-        process_time dep[:deps] unless dep[:deps].empty?
-      end
+      @root.process_time
     end
 
   end

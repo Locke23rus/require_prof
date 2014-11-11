@@ -1,3 +1,4 @@
+require 'require_prof/ext/kernel'
 require 'require_prof/profile'
 require 'require_prof/printers/tree_printer'
 

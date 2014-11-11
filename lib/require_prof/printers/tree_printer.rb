@@ -6,19 +6,19 @@ module RequireProf
     private
 
     def print_result
-      @output << ".\n"
-      print_tree(@result)
+      @output << "#{@result.name}\n"
+      print_trees(@result.children)
     end
 
-    def print_tree(deps, prefix = '')
-      last = deps.size - 1
-      deps.each_with_index do |dep, i|
+    def print_trees(nodes, prefix = '')
+      last = nodes.size - 1
+      nodes.each_with_index do |node, i|
         if i == last
-          @output << "#{prefix}└── #{dep[:name]} (#{dep[:time].round(precision)} ms)\n"
-          print_tree(dep[:deps], prefix + '    ')
+          @output << "#{prefix}└── #{node.name} (#{node.time.round(precision)} ms)\n"
+          print_trees(node.children, prefix + '    ')
         else
-          @output << "#{prefix}├── #{dep[:name]} (#{dep[:time].round(precision)} ms)\n"
-          print_tree(dep[:deps], prefix + '│   ')
+          @output << "#{prefix}├── #{node.name} (#{node.time.round(precision)} ms)\n"
+          print_trees(node.children, prefix + '│   ')
         end
       end
     end
