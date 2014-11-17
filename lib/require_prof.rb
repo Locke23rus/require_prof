@@ -6,8 +6,6 @@ require 'require_prof/printers/tree_printer'
 # TODO: Add option :threshold - only text format
 # TODO: Add option :order - only text format
 # TODO: Comment on https://twitter.com/schneems/status/531820584779264002
-# TODO: Measure memory footprint
-
 
 module RequireProf
 
@@ -54,7 +52,6 @@ module RequireProf
     unless block_given?
       raise(ArgumentError, 'A block must be provided to the profile');
     end
-    ensure_not_running!
 
     start
     yield
@@ -72,10 +69,10 @@ module RequireProf
   private
 
   def self.ensure_running!
-    raise(RuntimeError, 'RequireProf.start was not yet called') unless running?
+    raise 'RequireProf.start was not yet called' unless running?
   end
 
   def self.ensure_not_running!
-    raise(RuntimeError, 'RequireProf.start was already called') if running?
+    raise 'RequireProf.start was already called' if running?
   end
 end

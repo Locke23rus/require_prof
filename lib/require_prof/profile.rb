@@ -1,4 +1,5 @@
 require 'require_prof/ext/kernel'
+require 'require_prof/memory_sampler'
 require 'require_prof/require_tree'
 
 module RequireProf
@@ -40,18 +41,30 @@ module RequireProf
     end
 
     def require(name)
-      parent = @stack.last
       node = RequireTree.new(name)
-      parent << node
+      @stack.last << node
       @stack << node
       begin
         time_before = Time.now.to_f
+        if MemorySampler.available?
+          memory_before = MemorySampler.memory_usage
+          overhead_time_before = Time.now.to_f - time_before
+        end
         original_require name
       ensure
         @stack.pop
+        if MemorySampler.available?
+          tmp_time = Time.now.to_f
+          memory_after = MemorySampler.memory_usage
+          overhead_time_after = Time.now.to_f - tmp_time
+        end
         time_after = Time.now.to_f
       end
       node.total_time = (time_after - time_before) * 1000
+      if MemorySampler.available?
+        node.total_memory = memory_after - memory_before
+        node.overhead_time = (overhead_time_before + overhead_time_after) * 1000
+      end
     end
 
     private
@@ -66,6 +79,7 @@ module RequireProf
 
     def post_process
       @root.process_time
+      @root.process_memory
     end
 
   end
