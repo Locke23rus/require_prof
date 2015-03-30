@@ -1,9 +1,8 @@
-require 'minitest/autorun'
-
+$LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 $LOAD_PATH << File.join(File.dirname(__FILE__), 'fixtures')
-$LOAD_PATH << File.join(File.dirname(__FILE__), '..', 'lib')
 
 require 'require_prof'
+require 'minitest/autorun'
 
 describe RequireProf do
 

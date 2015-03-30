@@ -1,11 +1,8 @@
 require 'require_prof/ext/kernel'
 require 'require_prof/profile'
 require 'require_prof/printers/tree_printer'
-
-# TODO: Add text output
-# TODO: Add option :threshold - only text format
-# TODO: Add option :order - only text format
-# TODO: Comment on https://twitter.com/schneems/status/531820584779264002
+require 'require_prof/printers/table_printer'
+require 'require_prof/version'
 
 module RequireProf
 
@@ -62,7 +59,7 @@ module RequireProf
     if running? && !paused?
       @profile.require(name)
     else
-      original_require name
+      rp_original_require(name)
     end
   end
 

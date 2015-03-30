@@ -50,7 +50,7 @@ module RequireProf
           memory_before = MemorySampler.memory_usage
           overhead_time_before = Time.now.to_f - time_before
         end
-        original_require name
+        rp_original_require name
       ensure
         @stack.pop
         if MemorySampler.available?
@@ -74,7 +74,7 @@ module RequireProf
     end
 
     def remove_hook
-      ::Kernel.send :alias_method, :require, :original_require
+      ::Kernel.send :alias_method, :require, :rp_original_require
     end
 
     def post_process

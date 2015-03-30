@@ -1,3 +1,3 @@
 module Kernel
-  alias_method :original_require, :require
+  alias_method :rp_original_require, :require
 end

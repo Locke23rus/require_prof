@@ -5,16 +5,16 @@ module RequireProf
       @result = result
     end
 
-    def print(output = STDOUT, options = {})
-      @output = output
-      @option = options
+    def print(options = {})
+      @options = options
+      @output = options.fetch(:output, STDOUT)
       print_result
     end
 
     private
 
     def precision
-      @option[:precision] || 2
+      @options[:precision] || 2
     end
 
   end
