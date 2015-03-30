@@ -7,8 +7,6 @@ require 'text-table'
 
 module RequireProf
   class TablePrinter < AbstractPrinter
-
-    HEAD = %w(name time memory)
     SORTABLE_COLUMNS = %w(time memory)
 
     private
@@ -25,7 +23,7 @@ module RequireProf
     end
 
     def print_table
-      @output << Text::Table.new(head: HEAD, rows: sorted_rows).to_s
+      @output << Text::Table.new(head: ["name", "time (ms)", "memory (kb)"], rows: sorted_rows).to_s
     end
 
     def process_nodes(nodes)
@@ -39,7 +37,7 @@ module RequireProf
     end
 
     def sorted_rows
-      column = HEAD.index(sort)
+      column = SORTABLE_COLUMNS.index(sort) + 1
       @rows.select { |i| i[column] > threshold}.sort_by { |i| i[column] }.reverse
     end
 
