@@ -1,5 +1,7 @@
 # RequireProf
 
+Inspired by https://github.com/schneems/derailed_benchmarks
+
 ## Installation
 
 Add this line to your application's Gemfile:
